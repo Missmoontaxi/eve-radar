@@ -48,11 +48,15 @@
           <option value="city">City</option>
         </select>
       </label>
-      <div class="view-toggle" id="view-toggle" role="tablist">
-        <button class="vt" data-view="list" role="tab">List</button>
-        <button class="vt active" data-view="calendar" role="tab">Calendar</button>
+      <div class="ctl">
+        <span class="ctl-label">View</span>
+        <div class="view-toggle" id="view-toggle" role="tablist">
+          <button class="vt" data-view="list" role="tab">List</button>
+          <button class="vt active" data-view="calendar" role="tab">Calendar</button>
+        </div>
       </div>
-      <div class="export-wrap">
+      <div class="ctl">
+        <span class="ctl-label">Export</span>
         <button class="ghost-btn" id="export-csv" title="Export the current filtered list as CSV">↓ CSV</button>
       </div>
     </div>
@@ -70,8 +74,7 @@
 
   <footer>
     <span id="footer-meta"></span><br>
-    Sources: open web, recommended calendars, LinkedIn · scored against the three ICPs and home markets.
-    Confirm dates before committing — directional anchors, not locked logistics. Internal · do not share publicly.
+    Sources: open web, recommended calendars, LinkedIn · scored against ICPs and home markets. Dates confirmed before running, directional anchors, not locked logistics. Internal · do not share publicly.
   </footer>
 </main>
 

@@ -20,15 +20,16 @@
     { key: "city", label: "City", dot: true },
     { key: "tier", label: "Tier" },
     { key: "format", label: "Type" },
-    { key: "owner", label: "Owner" },
+    { key: "owner", label: "Team" },
     { key: "cost", label: "Cost" },
   ];
+  const GROUP_LABEL = { city: "City", tier: "Tier", format: "Type", owner: "Team", cost: "Cost" };
 
   // ---- state --------------------------------------------------------------
   let EVENTS = [], META = {};
   let STARS = {};                                  // id -> shared count
   const MINE = new Set(loadJSON("eve-radar-mine", []));   // ids this browser starred
-  const state = { search: "", sort: "picks", view: "calendar",
+  const state = { search: "", sort: "date", view: "calendar",
     filters: { city: new Set(), tier: new Set(), format: new Set(), owner: new Set(), cost: new Set() } };
 
   // ---- helpers ------------------------------------------------------------
@@ -40,6 +41,22 @@
   const stars = (id) => STARS[id] || 0;
   const effScore = (e) => e.score + stars(e.id) * STAR_WEIGHT;
   const fmt = (d) => new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  function countUp() {                         // numbers tick up from 0 on load — purely decorative
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.querySelectorAll(".stat .n[data-to]").forEach((el) => {
+      const to = +el.dataset.to || 0;
+      // animate only when visible & motion allowed; otherwise show the real number outright
+      if (reduce || to <= 0 || document.hidden) { el.textContent = to; return; }
+      const dur = 750, t0 = performance.now();
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));   // easeOutCubic
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      setTimeout(() => { el.textContent = to; }, dur + 200);   // guarantee the final value lands
+    });
+  }
 
   // ---- boot ---------------------------------------------------------------
   init();
@@ -89,23 +106,29 @@
   // ---- static chrome (stats, filters, legend) -----------------------------
   function renderChrome() {
     $("#hero-title").textContent = "Upcoming Events";
-    $("#hero-sub").textContent = `${fmt(META.window_start)} – ${fmt(META.window_end)} · NYC · SF · Austin · Online · National`;
+    $("#hero-sub").textContent = `Date Range: ${fmt(META.window_start)} – ${fmt(META.window_end)} · NYC · SF · Austin · Online · National`;
+    $("#sort").value = state.sort;
     $("#hero-meta").innerHTML = `Run ${esc(META.run_date)}<br>${esc((META.source_types || []).length)} source types<br>${esc(META.total)} events scored`;
     $("#footer-meta").textContent = `Eve Events Radar · run ${META.run_date} · ${META.total} events`;
 
     const c = META.counts || {};
     $("#stats").innerHTML = [
-      ["Top Events", c["Top Events"], "Top Events"], ["Worth it", c["Worth it"], "Worth it"],
-      ["On radar", META.total, "all"], ["Monitor", c["Monitor"], "Monitor"],
-    ].map(([l, n, tier]) => `<button class="stat" data-tier="${esc(tier)}" title="Filter to ${esc(l)}">` +
-      `<div class="n gold-text">${n ?? 0}</div><div class="l">${l}</div></button>`).join("");
+      ["Top Events", c["Top Events"]], ["Worth it", c["Worth it"]],
+      ["On radar", META.total], ["Monitor", c["Monitor"]],
+    ].map(([l, n]) => `<div class="stat"><div class="n gold-text" data-to="${n ?? 0}">0</div>` +
+      `<div class="l">${l}</div></div>`).join("");
+    countUp();
 
     // filter chips, values drawn from data
     const fb = $("#filterbar"); fb.innerHTML = "";
     for (const g of FILTER_GROUPS) {
       const counts = {};
       for (const e of EVENTS) { const v = e[g.key]; if (v) counts[v] = (counts[v] || 0) + 1; }
-      const vals = Object.keys(counts).sort((a, b) => g.key === "cost" ? a.length - b.length : a.localeCompare(b));
+      const tierOrder = TIERS.map((t) => t[0]);   // Top Events → Worth it → Monitor
+      const vals = Object.keys(counts).sort((a, b) =>
+        g.key === "cost" ? a.length - b.length :
+        g.key === "tier" ? tierOrder.indexOf(a) - tierOrder.indexOf(b) :
+        a.localeCompare(b));
       const row = document.createElement("div"); row.className = "filter-group";
       row.innerHTML = `<span class="filter-label">${g.label}</span>` + vals.map((v) =>
         `<button class="chip" data-group="${g.key}" data-val="${esc(v)}">` +
@@ -121,14 +144,6 @@
 
   // ---- events -------------------------------------------------------------
   function bind() {
-    $("#stats").addEventListener("click", (e) => {
-      const stat = e.target.closest(".stat"); if (!stat) return;
-      const t = stat.dataset.tier, set = state.filters.tier;
-      if (t === "all") set.clear();                          // "On radar" → show every tier
-      else if (set.size === 1 && set.has(t)) set.clear();    // click the active one again → clear
-      else { set.clear(); set.add(t); }                      // focus a single tier
-      render();
-    });
     $("#filterbar").addEventListener("click", (e) => {
       const chip = e.target.closest(".chip"); if (!chip) return;
       const set = state.filters[chip.dataset.group];
@@ -166,7 +181,7 @@
   function visible() {
     const f = state.filters, q = state.search;
     return EVENTS.filter((e) => {
-      for (const g of FILTER_GROUPS) { const s = f[g.key]; if (s.size && !s.has(e[g.key])) return false; }
+      for (const key of Object.keys(f)) { const s = f[key]; if (s.size && !s.has(e[key])) return false; }
       if (q) {
         const hay = (e.name + " " + e.host_org + " " + e.city + " " + e.city_raw + " " +
           (e.topic_tags || []).join(" ") + " " + e.format + " " + e.owner).toLowerCase();
@@ -189,11 +204,6 @@
   function syncControls() {
     document.querySelectorAll(".chip").forEach((ch) =>
       ch.classList.toggle("active", state.filters[ch.dataset.group].has(ch.dataset.val)));
-    const tier = state.filters.tier;
-    document.querySelectorAll(".stat").forEach((s) => {
-      const t = s.dataset.tier;
-      s.classList.toggle("active", t === "all" ? tier.size === 0 : (tier.size === 1 && tier.has(t)));
-    });
   }
 
   function render() {
@@ -208,7 +218,7 @@
 
   function summary(n) {
     const parts = [];
-    for (const g of FILTER_GROUPS) { const s = state.filters[g.key]; if (s.size) parts.push(`${g.label}: ${[...s].join(", ")}`); }
+    for (const key of Object.keys(state.filters)) { const s = state.filters[key]; if (s.size) parts.push(`${GROUP_LABEL[key]}: ${[...s].join(", ")}`); }
     if (state.search) parts.push(`“${state.search}”`);
     $("#active-summary").innerHTML = parts.length
       ? `Showing <strong>${n}</strong> · ${esc(parts.join("  ·  "))} — <a id="reset-link2">clear all</a>`
@@ -216,7 +226,7 @@
     const r2 = $("#reset-link2"); if (r2) r2.addEventListener("click", resetAll);
   }
   function resetAll() {
-    for (const g of FILTER_GROUPS) state.filters[g.key].clear();
+    Object.values(state.filters).forEach((s) => s.clear());
     state.search = ""; $("#search").value = ""; $("#search-clear").hidden = true; render();
   }
 
