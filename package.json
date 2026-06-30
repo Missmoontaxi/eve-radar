@@ -1,0 +1,15 @@
+{
+  "name": "eve-events-radar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Internal interactive Eve Events Radar — hosted at radar.moontaxilab.com",
+  "type": "module",
+  "scripts": {
+    "import": "node scripts/import-radar.mjs",
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "dependencies": {
+    "@vercel/kv": "^3.0.0"
+  }
+}
