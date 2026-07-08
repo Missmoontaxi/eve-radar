@@ -1,10 +1,10 @@
-# Eve Events Radar — hosted app
+# Eve Events Radar hosted app
 
 Internal, interactive home for the Eve Events Radar. Lives at **`radar.moontaxilab.com`**
 (its own Vercel project, separate from the public marketing site). Renders the scored
-event list as a slick, filterable destination for the Eve team — not a static file.
+event list as a slick, filterable destination for the Eve team, not a static file.
 
-> **Internal only.** The URL is unlisted and the app is marked `noindex`. There is no login —
+> **Internal only.** The URL is unlisted and the app is marked `noindex`. There is no login, 
 > don't post the link anywhere public.
 
 ## What it does
