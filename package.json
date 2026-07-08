@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "import": "node scripts/import-radar.mjs",
+    "scrub": "node scripts/scrub-owners.mjs",
     "dev": "vercel dev",
     "deploy": "vercel deploy --prod"
   },
