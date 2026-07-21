@@ -235,7 +235,11 @@
     const url = esc(e.url);
     const name = url ? `<a href="${url}" target="_blank" rel="noopener">${esc(e.name)}</a>` : esc(e.name);
     const line = [e.date_label, e.city_raw || e.city, e.host_org].filter(Boolean).map(esc).join(" · ");
-    const tags = (e.topic_tags || []).slice(0, 5).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+    // proof:{slug} tags come from the Ecosystem Qualifier feedback loop — link to the scorecard
+    const tags = (e.topic_tags || []).slice(0, 5).map((t) =>
+      t.startsWith("proof:")
+        ? `<a class="tag proof" href="/ecosystem#${esc(t.slice(6))}" title="This kind of room has already converted — see its ecosystem scorecard">✦ proven room</a>`
+        : `<span class="tag">${esc(t)}</span>`).join("");
     const on = MINE.has(e.id), n = stars(e.id);
     return `<div class="card" style="border-left-color:${c}" data-city="${esc(e.city)}">
       <div>

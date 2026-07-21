@@ -68,6 +68,28 @@ over to the new data as long as an event's name + date are unchanged.
 > Per the site's standing rules, **ask Paula before deploying to production.** Branch/preview
 > deploys (`vercel deploy` with no `--prod`) are fine for sharing work-in-progress.
 
+## The Ecosystem Qualifier page (`/ecosystem`)
+
+The empirical half of the radar: **which rooms actually converted.** Renders from
+`public/ecosystem.json` — an **aggregate-only** feed (source-level scores, funnels, rates,
+history) produced by the `ecosystem-qualifier` skill in the eve-gtm repo. Radar cards that
+match a proven source show a gold **✦ proven room** pill linking to `/ecosystem#{slug}`.
+
+```bash
+# 1. In Claude (in the eve-gtm repo): “run the ecosystem qualifier”
+#    → writes outputs/ecosystem.json (aggregate-only by contract)
+# 2. Import + deploy:
+npm run import:ecosystem -- <path-to-eve-gtm>/outputs/ecosystem.json
+vercel deploy --prod
+```
+
+Two privacy layers, by design:
+- **The feed can't carry people.** `score_ecosystem.py` emits source-level numbers only, and
+  `npm run import:ecosystem` hard-fails on any person-level marker (LinkedIn URLs, stage
+  columns, etc.). The named layer exists only in the internal HTML dashboard in the eve-gtm repo.
+- **The feed never enters this public repo.** `public/ecosystem.json` is git-ignored;
+  CLI deploys ship the local file. Don't force-add it.
+
 ## Local preview
 
 ```bash

@@ -4,3 +4,6 @@ node_modules/
 .env.local
 .DS_Store
 .env*
+
+# ecosystem feed is deploy-only: aggregate conversion data never enters the public repo
+public/ecosystem.json

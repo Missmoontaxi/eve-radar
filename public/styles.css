@@ -26,6 +26,12 @@ a{color:inherit;}
 .refresh-btn{background:rgba(255,255,255,.08);border:1px solid rgba(245,243,245,.25);color:#fff;
   border-radius:999px;padding:8px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
 .refresh-btn:hover{background:var(--rose);border-color:var(--rose);color:var(--ink);}
+.hero-nav{display:flex;gap:10px;align-items:center;}
+.nav-link{text-decoration:none;display:inline-flex;align-items:center;}
+/* proof tag — the Ecosystem Qualifier feedback loop; links to /ecosystem#slug */
+.tag.proof{background:linear-gradient(135deg,#DBB86B,#C4A07A);color:var(--ink);font-weight:600;
+  text-decoration:none;cursor:pointer;}
+.tag.proof:hover{filter:brightness(1.06);}
 
 .wrap{max-width:1180px;margin:0 auto;padding:0 48px 80px;}
 

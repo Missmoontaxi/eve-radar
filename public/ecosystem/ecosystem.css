@@ -1,0 +1,68 @@
+/* Ecosystem Qualifier page — extends /styles.css with funnel, verdict,
+   compare, trend, and source-card pieces. Same brand tokens throughout. */
+
+.hero-nav{display:flex;gap:10px;align-items:center;}
+.nav-link{text-decoration:none;display:inline-flex;align-items:center;}
+
+.sect{margin:48px 0 12px;}
+.sect .desc{color:var(--muted);font-size:13px;margin:4px 0 20px;max-width:720px;}
+
+/* stat tiles — sub-line under the number */
+.stat .s{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* funnel — sequential single hue, light→dark, direct labels */
+.funnel{background:#fff;border:1px solid var(--border);border-radius:14px;padding:26px 28px;}
+.frow{display:grid;grid-template-columns:170px 1fr 120px;gap:14px;align-items:center;margin-bottom:10px;}
+.frow:last-child{margin-bottom:0;}
+.flabel{font-size:13px;font-weight:600;color:var(--sec);}
+.fbarwrap{background:var(--porcelaindeep);border-radius:6px;height:26px;position:relative;}
+.fbar{height:26px;border-radius:4px;min-width:3px;transition:width .6s cubic-bezier(.2,.7,.3,1);}
+.fval{font-size:13px;color:var(--ink);font-weight:600;}
+.fval span{color:var(--muted);font-weight:500;}
+
+/* verdict */
+.verdict{background:var(--jewel);border-left:3px solid var(--rose);border-radius:12px;
+  color:var(--porcelain);padding:24px 28px;margin-top:16px;}
+.verdict .q{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:19px;line-height:1.5;}
+.verdict .a{font-size:13px;color:rgba(245,243,245,.7);margin-top:10px;}
+
+/* compare */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.cmp{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px 26px;}
+.cmp h3{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;color:var(--deepplum);}
+.cmp .row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--porcelaindeep);}
+.cmp .row:last-child{border-bottom:none;}
+.cmp .row b{color:var(--ink);}
+.cmp .row span{color:var(--muted);}
+
+/* trend */
+.trend{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 28px;}
+.trend .note{font-size:13px;color:var(--muted);}
+.trend .key{font-size:12px;color:var(--muted);margin-top:8px;}
+.trend .key .k{display:inline-flex;align-items:center;gap:6px;margin-right:16px;}
+.trend .key .sw{width:14px;height:3px;border-radius:2px;display:inline-block;}
+.trend .runs{margin-top:12px;}
+.trend .runs .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--porcelaindeep);}
+.trend .runs .row:last-child{border-bottom:none;}
+.trend .runs b{color:var(--ink);}
+.trend .runs span{color:var(--muted);}
+
+/* source cards — mini funnel + breakdown */
+.card.src-card{border-left:3px solid var(--rose);}
+.card.src-card.t1{border-left:4px solid var(--plum);}
+.card.src-card:target,.card.src-card.flash{box-shadow:0 0 0 3px rgba(196,160,122,.45);}
+.mini{margin-top:12px;display:flex;gap:0;align-items:center;flex-wrap:wrap;}
+.mstep{display:flex;align-items:center;gap:8px;}
+.mnum{font-family:'Instrument Serif',Georgia,serif;font-size:22px;color:var(--deepplum);line-height:1;}
+.mlab{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.marrow{color:var(--rose);margin:0 14px;font-size:14px;}
+.tag.warn{background:#fff;border:1px dashed var(--rose);color:var(--sec);}
+.tag.stage{background:var(--deepplum);color:#fff;}
+.right .tierlab{font-size:12px;font-weight:600;color:var(--sec);}
+.right .bd{font-size:11px;color:var(--muted);line-height:1.7;}
+
+@media (max-width:760px){
+  .compare{grid-template-columns:1fr;}
+  .frow{grid-template-columns:110px 1fr 90px;}
+}
+@media print{.filterbar,.refresh-btn{display:none;}}
