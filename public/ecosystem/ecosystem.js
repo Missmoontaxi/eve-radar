@@ -5,9 +5,9 @@
   "use strict";
 
   const TIERS = [
-    ["Double down", "Proven signal — allocate calendar here first and book the next edition."],
+    ["Double down", "Proven signal: allocate calendar here first and book the next edition."],
     ["Working", "Real motion, not yet proven. Work the follow-ups before adding new rooms."],
-    ["Watch", "Low signal so far — harvest what's there; don't reinvest until the data argues."],
+    ["Watch", "Low signal so far. Harvest what's there; don't reinvest until the data argues."],
   ];
   const SMALL_N = 5;
   // sequential plum ramp, light→dark — magnitude encoding for the funnel (one hue)
@@ -27,7 +27,7 @@
       const r = await fetch("/ecosystem.json", { cache: "no-store" });
       DATA = await r.json();
     } catch (e) {
-      $("#results").innerHTML = `<div class="empty">Couldn't load ecosystem.json — ${esc(e.message)}</div>`;
+      $("#results").innerHTML = `<div class="empty">Couldn't load ecosystem.json: ${esc(e.message)}</div>`;
       return;
     }
     renderChrome();
@@ -88,10 +88,10 @@
     const lines = [];
     if (ev && co) {
       lines.push(co.followup_rate > ev.followup_rate
-        ? `Communities out-convert events on follow-up (${pct(co.followup_rate)} vs ${pct(ev.followup_rate)}) — existing trust shortens the path.`
+        ? `Communities out-convert events on follow-up (${pct(co.followup_rate)} vs ${pct(ev.followup_rate)}); existing trust shortens the path.`
         : `Events out-convert communities on follow-up (${pct(ev.followup_rate)} vs ${pct(co.followup_rate)}).`);
     }
-    if (p.demos) lines.push(`All ${p.demos} demos so far came through the warm path — zero from cold outbound, consistent with the hypothesis.`);
+    if (p.demos) lines.push(`All ${p.demos} demos so far came through the warm path, zero from cold outbound: consistent with the hypothesis.`);
     lines.push(`Portfolio: ${pct(p.in_motion_rate)} of connections are in motion; the near-term lever is converting the ${p.in_motion - p.held} scheduling/scheduled follow-ups into held meetings.`);
     $("#verdict").innerHTML =
       `<div class="q">Is the hypothesis holding?</div><div class="a">${esc(lines.join(" "))}</div>`;
@@ -116,7 +116,7 @@
     const hist = DATA.history || [];
     if (hist.length < 2) {
       $("#trend").innerHTML = `<div class="note">Baseline recorded ${esc(hist[0] ? hist[0].run_date : "")}.
-        Trend lines appear from the second weekly run — follow-up rate, demo rate, and per-source scores over time.</div>`;
+        Trend lines appear from the second weekly run: follow-up rate, demo rate, and per-source scores over time.</div>`;
       return;
     }
     const pts = hist.map((h) => [h.run_date, h.portfolio.followup_rate || 0, h.portfolio.demo_rate || 0]);
@@ -153,7 +153,7 @@
   function srcCard(s) {
     const f = s.funnel, r = s.rates, b = s.breakdown;
     const t1 = s.tier === "Double down" ? "t1" : "";
-    const small = s.directional ? `<span class="tag warn">n &lt; ${SMALL_N} — directional</span>` : "";
+    const small = s.directional ? `<span class="tag warn">n &lt; ${SMALL_N} · directional</span>` : "";
     const stages = (f.revenue_class || f.community_class)
       ? `<span class="tag stage">${f.revenue_class} revenue-class · ${f.community_class} community-class</span>` : "";
     return `<div class="card src-card ${t1}" id="${esc(s.slug)}" data-type="${esc(s.type)}" data-tier="${esc(s.tier)}">
